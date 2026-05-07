@@ -12,15 +12,23 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@linear/sdk": "^84.0.0",
+    "@tanstack/react-query": "^5.100.9",
+    "@xyflow/react": "^12.10.2",
+    "dagre": "^0.8.5",
+    "iron-session": "^8.0.4",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/dagre": "^0.7.54",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
