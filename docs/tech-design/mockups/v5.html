@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>better-linear · v5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink:           oklch(0.18  0.012 80);
+    --ink-2:         oklch(0.34  0.010 80);
+    --muted:         oklch(0.58  0.008 80);
+    --muted-2:       oklch(0.72  0.006 80);
+    --line:          oklch(0.91  0.006 80);
+    --line-strong:   oklch(0.84  0.008 80);
+    --line-ink:      oklch(0.40  0.010 80);
+    --paper:         oklch(0.965 0.005 80);
+    --app:           oklch(0.985 0.004 80);
+    --surface:       oklch(0.995 0.002 80);
+    --hover:         oklch(0.94  0.006 80);
+
+    --av-1:          oklch(0.78  0.05  60);   /* warm tan */
+    --av-2:          oklch(0.78  0.05 200);   /* cool slate-blue */
+    --av-3:          oklch(0.78  0.05 140);   /* sage */
+
+    --text-xs: 0.6875rem; --text-sm: 0.8125rem; --text-base: 1rem; --text-lg: 1.25rem;
+
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: "Geist Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body { margin: 0; padding: 0; background: var(--paper); min-height: 100vh; }
+  body { font-family: var(--sans); color: var(--ink); padding: 28px 32px 64px;
+         font-feature-settings: "ss01", "ss03", "tnum"; -webkit-font-smoothing: antialiased;
+         font-size: var(--text-sm); line-height: 1.5; letter-spacing: -0.005em; }
+  h2 { font-size: var(--text-base); margin: 0 0 4px; letter-spacing: -0.015em; font-weight: 600; }
+  .lead { font-size: var(--text-sm); color: var(--ink-2); margin: 0 0 22px; max-width: 640px; }
+
+  .mock { font-family: inherit; border-radius: 10px; overflow: hidden;
+          box-shadow: 0 1px 0 oklch(0.18 0.012 80 / 0.02), 0 30px 80px -36px oklch(0.18 0.012 80 / 0.18);
+          background: var(--app); color: var(--ink); width: 1180px; }
+  .mock * { box-sizing: border-box; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between;
+            padding: 0 14px; border-bottom: 1px solid var(--line); height: 46px; font-size: var(--text-sm); }
+  .left { display:flex; align-items:center; gap: 16px; }
+  .right { display:flex; align-items:center; gap: 4px; color: var(--muted); }
+  .logo { font-weight: 600; letter-spacing: -0.02em; font-size: var(--text-sm); }
+  .seg { display:flex; gap: 2px; }
+  .seg button { background: transparent; border: 0; padding: 5px 10px; font-size: var(--text-sm);
+                color: var(--muted); cursor: pointer; font-family: inherit; border-radius: 4px; font-weight: 400; }
+  .seg button:hover { background: var(--hover); color: var(--ink); }
+  .seg .active { color: var(--ink); background: var(--hover); font-weight: 500; }
+  .subscope { display:flex; align-items:center; gap: 6px; padding-left: 12px; margin-left: 6px;
+              border-left: 1px solid var(--line); color: var(--ink-2); font-size: var(--text-sm); }
+  .subscope .label { color: var(--muted); }
+  .subscope .pick { display:inline-flex; align-items:center; gap: 4px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
+  .subscope .pick:hover { background: var(--hover); }
+  .subscope svg { width: 10px; height: 10px; opacity: 0.6; }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width: 28px; height: 28px;
+              border-radius: 4px; cursor: pointer; color: var(--ink-2); }
+  .icon-btn:hover { background: var(--hover); color: var(--ink); }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .filter-btn { display:inline-flex; align-items:center; gap: 6px; padding: 5px 9px; border-radius: 4px;
+                font-size: var(--text-sm); color: var(--ink-2); cursor: pointer; }
+  .filter-btn:hover { background: var(--hover); color: var(--ink); }
+  .filter-btn .num { font-family: var(--mono); color: var(--muted); }
+
+  /* canvas + panel ─────────────────────────────────────────── */
+  .body { display: grid; grid-template-columns: 875px 305px; }
+  .canvas { position: relative; background: var(--app); width: 875px; height: 500px; overflow: hidden; }
+  .panel { padding: 0; border-left: 1px solid var(--line); display: flex; flex-direction: column;
+           background: var(--app); width: 305px; }
+  .panel-section { padding: 20px 18px 14px; }
+  .panel-section + .panel-section { border-top: 1px solid var(--line); padding-top: 18px; }
+  .panel-title { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.09em;
+                 margin: 0 0 16px; color: var(--muted); font-weight: 500;
+                 display: flex; align-items: center; justify-content: space-between; }
+  .panel-title .count { font-family: var(--mono); font-size: var(--text-xs); color: var(--muted-2); font-weight: 400; letter-spacing: 0; }
+
+  .ready-row { padding: 12px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .ready-row:last-child { border-bottom: 0; }
+  .ready-row .head { display: flex; align-items: baseline; gap: 6px; }
+  .ready-row .id { font-family: var(--mono); font-size: var(--text-xs); color: var(--muted); letter-spacing: -0.01em; }
+  .ready-row .title { color: var(--ink); font-size: var(--text-sm); line-height: 1.35; font-weight: 500; }
+  .ready-row .impact { display: flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+  .ready-row .impact .num { font-size: var(--text-base); color: var(--ink); font-weight: 500;
+                            font-family: var(--mono); letter-spacing: -0.02em; }
+  .ready-row .impact .label { font-size: var(--text-sm); color: var(--ink-2); }
+  .ready-row .meta-row { margin-top: 4px; display: flex; align-items: center; gap: 8px;
+                         font-size: var(--text-xs); color: var(--muted); font-family: var(--mono); }
+  .ready-row.muted .title { color: var(--ink-2); font-weight: 400; }
+  .ready-row.muted .id { color: var(--muted-2); }
+  .ready-row.muted .meta-row { color: var(--muted-2); }
+
+  /* nodes ──────────────────────────────────────────────────── */
+  .node { position: absolute; width: 220px; padding: 10px 12px; border-radius: 5px;
+          border: 1px solid var(--line-strong); background: var(--surface);
+          font-size: var(--text-xs); line-height: 1.35; color: var(--ink);
+          transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1); }
+  .node.ready { border-color: var(--line-ink); }
+  .node-head { display: flex; align-items: center; gap: 7px; }
+  .node-head .right-side { margin-left: auto; }
+  .node .status { width: 11px; height: 11px; border-radius: 50%;
+                  border: 1.25px solid var(--ink-2); flex-shrink: 0; box-sizing: border-box; }
+  .node .status.todo { background: transparent; }
+  .node .status.in-progress { background: conic-gradient(var(--ink-2) 0 50%, transparent 50% 100%); }
+  .node .status.done { background: var(--ink-2); }
+  .node .id { font-family: var(--mono); font-size: var(--text-xs); color: var(--muted);
+              letter-spacing: -0.01em; font-weight: 400; }
+  .node.ready .id { color: var(--ink); font-weight: 500; }
+  .node .title { font-size: var(--text-sm); margin-top: 4px; color: var(--ink); font-weight: 500;
+                 letter-spacing: -0.005em; display: -webkit-box;
+                 -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .node .nmeta { display: flex; align-items: center; gap: 8px; margin-top: 8px;
+                 font-size: var(--text-xs); color: var(--muted);
+                 font-family: var(--mono); letter-spacing: -0.01em; }
+  .node .nmeta .sep { color: var(--muted-2); }
+  .node.dim { opacity: 0.32; }
+
+  /* avatar ─────────────────────────────────────────────────── */
+  .avatar { width: 18px; height: 18px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: var(--mono); font-size: 9px; font-weight: 500;
+            color: var(--ink); letter-spacing: 0; }
+  .avatar.af { background: var(--av-1); }
+  .avatar.jk { background: var(--av-2); }
+  .avatar.bm { background: var(--av-3); }
+  .avatar.s  { width: 14px; height: 14px; font-size: 8px; }
+  .ready-row .avatar { vertical-align: -3px; }
+
+  /* edges ──────────────────────────────────────────────────── */
+  .edges { position: absolute; inset: 0; pointer-events: none; }
+  .edge { stroke: var(--line-strong); stroke-width: 1.25; fill: none; stroke-linejoin: round; }
+
+  /* footer ─────────────────────────────────────────────────── */
+  .footer { display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 16px; border-top: 1px solid var(--line); font-size: var(--text-xs);
+            color: var(--muted); font-family: var(--mono); letter-spacing: -0.01em; }
+  .footer .stats { display: flex; gap: 14px; }
+  .footer .stats span span { color: var(--ink-2); }
+  .footer .help { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .footer .help:hover { color: var(--ink); }
+  .footer kbd { font-family: var(--mono); font-size: var(--text-xs); padding: 1px 5px;
+                border-radius: 3px; background: var(--hover); color: var(--ink-2); }
+
+  .notes { max-width: 760px; margin-top: 28px; font-size: var(--text-sm); line-height: 1.65; color: var(--ink-2); }
+  .notes p { margin: 0 0 10px; }
+  .notes strong { color: var(--ink); font-weight: 600; }
+  .notes ul { padding-left: 20px; margin: 0 0 14px; }
+  .notes li { margin-bottom: 5px; }
+</style>
+</head>
+<body>
+
+<h2>better-linear, v5</h2>
+<p class="lead">Assignee avatars added. SVG locked to pixel dimensions so edges land on node centers (no more floating). Layout slightly tightened.</p>
+
+<div class="mock">
+  <div class="topbar">
+    <div class="left">
+      <span class="logo">better-linear</span>
+      <div class="seg">
+        <button>My Work</button>
+        <button class="active">Project</button>
+        <button>Cycle</button>
+        <button>Team</button>
+      </div>
+      <div class="subscope">
+        <span class="label">Project</span>
+        <span class="pick">API rewrite <svg viewBox="0 0 10 10"><path d="M2 4 L5 7 L8 4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+      </div>
+    </div>
+    <div class="right">
+      <span class="filter-btn">Filters <span class="num">2</span></span>
+      <span class="icon-btn" title="Show done"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor"/><path d="M5 7 L6.5 8.5 L9 5.5" stroke="currentColor" fill="none" stroke-linecap="round"/></svg></span>
+      <span class="icon-btn" title="Refresh"><svg viewBox="0 0 14 14" fill="none"><path d="M11.5 5 A4.5 4.5 0 1 0 12 7" stroke="currentColor" stroke-linecap="round"/><path d="M11.5 2.5 V5 H9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="canvas">
+      <!--
+        Node geometry (px, in canvas coords):
+          width 220, height ~ 96 (with 2-line title) or ~80 (1-line)
+          Layer 1 (ready):  y = 40,  centers at x = 140 / 437 / 735
+          Layer 2:          y = 180, centers at x = 290 / 585
+          Layer 3:          y = 320, centers at x = 200 / 480
+        Edge endpoints land at (cx, top) and (cx, bottom).
+      -->
+      <svg class="edges" width="875" height="500" viewBox="0 0 875 500">
+        <!-- Layer 1 → Layer 2 -->
+        <!-- 642 (140, 120) → 660 (290, 180) -->
+        <path class="edge" d="M140,120 V150 H290 V180"/>
+        <!-- 651 (437, 120) → 660 (290, 180) -->
+        <path class="edge" d="M437,120 V150 H290 V180"/>
+        <!-- 651 (437, 120) → 672 (585, 180) -->
+        <path class="edge" d="M437,120 V150 H585 V180"/>
+        <!-- 688 (735, 120) → 672 (585, 180) -->
+        <path class="edge" d="M735,120 V150 H585 V180"/>
+
+        <!-- Layer 2 → Layer 3 -->
+        <!-- 660 (290, 276) → 695 (200, 320) -->
+        <path class="edge" d="M290,276 V298 H200 V320"/>
+        <!-- 660 (290, 276) → 701 (480, 320) -->
+        <path class="edge" d="M290,276 V298 H480 V320"/>
+        <!-- 672 (585, 276) → 701 (480, 320) -->
+        <path class="edge" d="M585,276 V298 H480 V320"/>
+      </svg>
+
+      <!-- LAYER 1: ready (top: 40, centers: 140 / 437 / 735) -->
+      <div class="node ready" style="left:30px; top:40px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-642</span>
+          <span class="right-side"><span class="avatar af" title="Angela Felicia">A</span></span>
+        </div>
+        <div class="title">Set up Linear OAuth callback</div>
+        <div class="nmeta"><span>P1</span><span class="sep">·</span><span>Backend</span></div>
+      </div>
+
+      <div class="node ready" style="left:327px; top:40px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-651</span>
+          <span class="right-side"><span class="avatar jk" title="Jordan Kim">J</span></span>
+        </div>
+        <div class="title">Encrypted iron-session cookie helper</div>
+        <div class="nmeta"><span>P2</span><span class="sep">·</span><span>Backend</span></div>
+      </div>
+
+      <div class="node ready" style="left:625px; top:40px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-688</span>
+          <span class="right-side"><span class="avatar bm" title="Ben Marcus">B</span></span>
+        </div>
+        <div class="title">Ready scoring formula</div>
+        <div class="nmeta"><span>P0</span><span class="sep">·</span><span>Graph</span></div>
+      </div>
+
+      <!-- LAYER 2 (top: 180, centers: 290 / 585) -->
+      <div class="node" style="left:180px; top:180px;">
+        <div class="node-head">
+          <span class="status in-progress"></span>
+          <span class="id">ENG-660</span>
+          <span class="right-side"><span class="avatar af" title="Angela Felicia">A</span></span>
+        </div>
+        <div class="title">/api/issues normalize layer</div>
+        <div class="nmeta"><span>P1</span><span class="sep">·</span><span>API</span></div>
+      </div>
+
+      <div class="node" style="left:475px; top:180px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-672</span>
+          <span class="right-side"><span class="avatar jk" title="Jordan Kim">J</span></span>
+        </div>
+        <div class="title">React Flow canvas wrapper</div>
+        <div class="nmeta"><span>P2</span><span class="sep">·</span><span>UI</span></div>
+      </div>
+
+      <!-- LAYER 3 (top: 320, centers: 200 / 480) -->
+      <div class="node" style="left:90px; top:320px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-695</span>
+          <span class="right-side"><span class="avatar bm" title="Ben Marcus">B</span></span>
+        </div>
+        <div class="title">Toolbar scope switcher</div>
+        <div class="nmeta"><span>P3</span><span class="sep">·</span><span>UI</span></div>
+      </div>
+
+      <div class="node" style="left:370px; top:320px;">
+        <div class="node-head">
+          <span class="status todo"></span>
+          <span class="id">ENG-701</span>
+          <span class="right-side"><span class="avatar af" title="Angela Felicia">A</span></span>
+        </div>
+        <div class="title">Issue detail side panel with hover preview</div>
+        <div class="nmeta"><span>P2</span><span class="sep">·</span><span>UI</span></div>
+      </div>
+    </div>
+
+    <!-- READY PANEL -->
+    <div class="panel">
+      <div class="panel-section">
+        <p class="panel-title">Ready to work <span class="count">3</span></p>
+        <div class="ready-row">
+          <div class="head"><span class="id">ENG-688</span><span class="title">Ready scoring formula</span></div>
+          <div class="impact"><span class="num">4</span><span class="label">issues unblock</span></div>
+          <div class="meta-row"><span class="avatar bm s">B</span><span>Ben Marcus</span><span>·</span><span>P0</span><span>·</span><span>Graph</span></div>
+        </div>
+        <div class="ready-row">
+          <div class="head"><span class="id">ENG-642</span><span class="title">Linear OAuth callback</span></div>
+          <div class="impact"><span class="num">3</span><span class="label">issues unblock</span></div>
+          <div class="meta-row"><span class="avatar af s">A</span><span>Angela Felicia</span><span>·</span><span>P1</span><span>·</span><span>Backend</span></div>
+        </div>
+        <div class="ready-row">
+          <div class="head"><span class="id">ENG-651</span><span class="title">iron-session cookie helper</span></div>
+          <div class="impact"><span class="num">2</span><span class="label">issues unblock</span></div>
+          <div class="meta-row"><span class="avatar jk s">J</span><span>Jordan Kim</span><span>·</span><span>P2</span><span>·</span><span>Backend</span></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <p class="panel-title">Blocked <span class="count">4</span></p>
+        <div class="ready-row muted">
+          <div class="head"><span class="id">ENG-660</span><span class="title">/api/issues normalize</span></div>
+          <div class="meta-row">waiting on ENG-642, ENG-651</div>
+        </div>
+        <div class="ready-row muted">
+          <div class="head"><span class="id">ENG-672</span><span class="title">React Flow wrapper</span></div>
+          <div class="meta-row">waiting on ENG-651, ENG-688</div>
+        </div>
+        <div class="ready-row muted">
+          <div class="head"><span class="id">ENG-695</span><span class="title">Toolbar scope switcher</span></div>
+          <div class="meta-row">waiting on ENG-660</div>
+        </div>
+        <div class="ready-row muted">
+          <div class="head"><span class="id">ENG-701</span><span class="title">Issue detail side panel</span></div>
+          <div class="meta-row">waiting on ENG-660, ENG-672</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="stats">
+      <span>7 issues</span>
+      <span>3 ready</span>
+      <span>4 blocked</span>
+      <span>updated 12s ago</span>
+    </div>
+    <span class="help"><kbd>?</kbd> shortcuts</span>
+  </div>
+</div>
+
+<div class="notes">
+  <p><strong>v5 changes:</strong></p>
+  <ul>
+    <li>Avatars on every node (right side of header). 18px circle, single initial in mono. Three muted OKLCH hues distinguish assignees, all chroma 0.05.</li>
+    <li>Avatars also appear in the Ready panel meta row (14px) before the assignee name.</li>
+    <li>SVG locked to 875x500 pixel viewBox so orthogonal edges actually land on node center-tops/bottoms. Edge weight nudged to 1.25px for legibility.</li>
+    <li>Layout tightened: layer gap is now 140px (was 160px), nodes feel connected to the lines.</li>
+  </ul>
+  <p>If this is good enough to build off of, say sign-off and I commit PRODUCT.md, DESIGN.md, and a tech-design ui-design.md, then move to the implementation plan.</p>
+</div>
+</body>
+</html>
