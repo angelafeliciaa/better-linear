@@ -104,3 +104,4 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - When in doubt, ask before acting.
 - Never log, return, or expose the Linear access token to the client.
 - Never persist user issue data — v1 is fully ephemeral.
+- **No `Co-Authored-By:` AI attribution trailers in commits, ever.** A `PreToolUse` Bash hook (`.claude/hooks/block-claude-coauthor.sh`, registered in `.claude/settings.json`) blocks any commit that contains one. Subagents and orchestrated agents inherit this rule.
