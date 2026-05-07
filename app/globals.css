@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-ink: oklch(0.18 0.012 80);
+  --color-ink-2: oklch(0.34 0.010 80);
+  --color-muted: oklch(0.58 0.008 80);
+  --color-muted-2: oklch(0.72 0.006 80);
+  --color-line: oklch(0.91 0.006 80);
+  --color-line-strong: oklch(0.84 0.008 80);
+  --color-line-ink: oklch(0.40 0.010 80);
+  --color-paper: oklch(0.965 0.005 80);
+  --color-app: oklch(0.985 0.004 80);
+  --color-surface: oklch(0.995 0.002 80);
+  --color-hover: oklch(0.94 0.006 80);
+  --color-av-1: oklch(0.78 0.05 60);
+  --color-av-2: oklch(0.78 0.05 200);
+  --color-av-3: oklch(0.78 0.05 140);
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", ui-monospace, monospace;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+html, body { font-family: var(--font-sans); font-feature-settings: "ss01", "ss03", "tnum"; letter-spacing: -0.005em; }
