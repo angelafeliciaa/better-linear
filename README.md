@@ -1,33 +1,32 @@
 # better-linear
 
-A graph-based dependency view for Linear issues. Sign in with Linear, see your work as an interactive top-down DAG of `blocks` / `blocked-by` relationships, and let a "Ready to Work" panel rank issues by **how many other issues completing each one would unblock**.
+A graph view of your Linear issues that ranks ready-to-work tickets by how much they unblock.
 
-The primitive Linear is missing.
+## Local dev
 
-## Status
+1. Copy env: `cp .env.example .env.local`
+2. Register a Linear OAuth app at https://linear.app/settings/api/applications/new:
+   - Redirect URI: `http://localhost:3000/api/auth/callback`
+   - Scopes: `read`
+3. Fill `LINEAR_CLIENT_ID`, `LINEAR_CLIENT_SECRET`, `LINEAR_REDIRECT_URI`, and `SESSION_PASSWORD` (generate with `openssl rand -hex 32`).
+4. `npm install && npm run dev` and open http://localhost:3000.
 
-In design. v1 spec lives at [`docs/superpowers/specs/2026-05-06-better-linear-design.md`](docs/superpowers/specs/2026-05-06-better-linear-design.md).
+## Deploy (Vercel)
 
-## Stack (v1)
+- Push to GitHub, import the repo at https://vercel.com/new.
+- Set the same env vars in the Vercel dashboard. Use the Vercel-issued production URL for `LINEAR_REDIRECT_URI` and create a separate OAuth app for production.
+- `SESSION_PASSWORD` must be at least 32 chars and match across deployments.
 
-- Next.js 15 (App Router) on Vercel — stateless functions, no DB
-- TypeScript strict, Tailwind CSS, shadcn/ui
-- React Flow + dagre for the layered DAG
-- Zustand + TanStack Query
-- `@linear/sdk` for Linear's GraphQL API
-- `iron-session` for encrypted httpOnly session cookies
+## Scripts
 
-## Getting started
+| Command | What |
+|---|---|
+| `npm run dev` | Next.js dev (Turbopack) |
+| `npm run build` | Production build |
+| `npm test` | Vitest |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
 
-```bash
-cp .env.example .env.local
-# fill in LINEAR_CLIENT_ID / LINEAR_CLIENT_SECRET / SESSION_PASSWORD
-npm install
-npm run dev
-```
+## Architecture
 
-Then open http://localhost:3000.
-
-## License
-
-MIT (pending).
+Stateless Next.js. Auth via Linear OAuth, encrypted httpOnly cookie. Server fetches from Linear's GraphQL on each request. Client renders a layered DAG (dagre + React Flow). See `docs/superpowers/specs/2026-05-06-better-linear-design.md` and `docs/tech-design/ui-design.md`.
