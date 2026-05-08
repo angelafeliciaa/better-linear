@@ -13,7 +13,7 @@ import type { IssueGraph } from "@/lib/linear/types";
 async function fetchGraph(): Promise<IssueGraph> {
   const res = await fetch("/api/issues", { cache: "no-store" });
   if (res.status === 401) {
-    window.location.href = "/api/auth/login";
+    window.location.href = "/settings";
     throw new Error("redirecting");
   }
   if (!res.ok) {

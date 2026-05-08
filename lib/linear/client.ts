@@ -3,8 +3,8 @@ import { ASSIGNED_ISSUES_QUERY, ISSUES_BY_IDS_QUERY } from "./queries";
 import { normalizeIssues } from "./normalize";
 import type { IssueGraph } from "./types";
 
-export async function fetchAssignedGraph(accessToken: string): Promise<IssueGraph> {
-  const client = new LinearClient({ accessToken });
+export async function fetchAssignedGraph(apiKey: string): Promise<IssueGraph> {
+  const client = new LinearClient({ apiKey });
   const first = 250;
 
   const data = (await client.client.rawRequest(ASSIGNED_ISSUES_QUERY, { first })).data as {

@@ -4,6 +4,6 @@ import { GraphView } from "@/components/graph/GraphView";
 
 export default async function GraphPage() {
   const session = await getSession();
-  if (!session) redirect("/api/auth/login");
+  if (!session) redirect("/settings");
   return <GraphView />;
 }

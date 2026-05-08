@@ -9,10 +9,10 @@ export default function Home() {
           A graph view for your Linear issues. See what blocks what, and what to work on next.
         </p>
         <Link
-          href="/api/auth/login"
+          href="/settings"
           className="inline-block mt-6 px-4 py-2 rounded text-sm bg-ink text-paper hover:bg-ink-2 transition-colors"
         >
-          Sign in with Linear
+          Connect with Linear
         </Link>
       </div>
     </main>

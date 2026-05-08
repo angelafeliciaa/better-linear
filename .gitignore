@@ -45,4 +45,10 @@ coverage/
 .research/
 
 # OMC
-.omc/cache/
+.omc/
+
+# Auto-generated AI agent docs
+AGENTS.md
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo

@@ -5,17 +5,17 @@ A graph view of your Linear issues that ranks ready-to-work tickets by how much 
 ## Local dev
 
 1. Copy env: `cp .env.example .env.local`
-2. Register a Linear OAuth app at https://linear.app/settings/api/applications/new:
-   - Redirect URI: `http://localhost:3000/api/auth/callback`
-   - Scopes: `read`
-3. Fill `LINEAR_CLIENT_ID`, `LINEAR_CLIENT_SECRET`, `LINEAR_REDIRECT_URI`, and `SESSION_PASSWORD` (generate with `openssl rand -hex 32`).
-4. `npm install && npm run dev` and open http://localhost:3000.
+2. Set `SESSION_PASSWORD` (generate with `openssl rand -hex 32`).
+3. `npm install && npm run dev` and open http://localhost:3000.
+4. Click **Connect with Linear**. Paste a personal API key from https://linear.app/settings/api &rsaquo; **Personal API keys** &rsaquo; **New key** (read scope is enough). Anyone in any workspace can mint one — no admin needed.
+
+The key is encrypted with `iron-session` and stored only in an httpOnly cookie on your device. We never persist it.
 
 ## Deploy (Vercel)
 
 - Push to GitHub, import the repo at https://vercel.com/new.
-- Set the same env vars in the Vercel dashboard. Use the Vercel-issued production URL for `LINEAR_REDIRECT_URI` and create a separate OAuth app for production.
-- `SESSION_PASSWORD` must be at least 32 chars and match across deployments.
+- Set `SESSION_PASSWORD` (32+ chars) and `NEXT_PUBLIC_APP_URL` in the Vercel dashboard.
+- Each visitor brings their own Linear personal API key, pasted at `/settings`. No shared OAuth app, no admin gate.
 
 ## Scripts
 
