@@ -1,6 +1,6 @@
 "use client";
 import { useMemo } from "react";
-import { ReactFlow, type Node, type Edge as RFEdge, Background, Controls } from "@xyflow/react";
+import { ReactFlow, type Node, type Edge as RFEdge, Background, Controls, MiniMap } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { IssueNode } from "./IssueNode";
 import type { Issue } from "@/lib/linear/types";
@@ -74,6 +74,18 @@ export function DependencyGraph() {
       >
         <Background gap={0} color="transparent" />
         <Controls showInteractive={false} />
+        <MiniMap
+          pannable
+          zoomable
+          maskColor="oklch(0.965 0.005 80 / 0.8)"
+          nodeColor={(n) =>
+            (n.data as { ready?: boolean })?.ready
+              ? "oklch(0.40 0.010 80)"
+              : "oklch(0.84 0.008 80)"
+          }
+          nodeStrokeWidth={0}
+          className="!bg-paper !border !border-line !rounded"
+        />
       </ReactFlow>
     </div>
   );

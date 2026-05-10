@@ -8,6 +8,9 @@ import { ReadyPanel } from "./ReadyPanel";
 import { useShortcuts } from "@/components/keyboard/useShortcuts";
 import { showToast } from "@/components/system/Toaster";
 import { detectCycles } from "@/lib/graph/cycle-detect";
+import { applyFilters } from "@/lib/graph/filter";
+import { computeReady } from "@/lib/graph/topo";
+import { scoreReady } from "@/lib/graph/score";
 import type { IssueGraph } from "@/lib/linear/types";
 
 async function fetchGraph(): Promise<IssueGraph> {
@@ -28,6 +31,7 @@ async function fetchGraph(): Promise<IssueGraph> {
 
 export function GraphView() {
   const setGraph = useGraphStore((s) => s.setGraph);
+  const filters = useGraphStore((s) => s.filters);
   const { data, refetch, isLoading, isError, error, dataUpdatedAt } = useQuery({
     queryKey: ["graph"],
     queryFn: fetchGraph,
@@ -35,6 +39,15 @@ export function GraphView() {
   useShortcuts({ onRefresh: () => refetch() });
 
   const cycles = useMemo(() => (data ? detectCycles(data.edges) : []), [data]);
+
+  const startHere = useMemo(() => {
+    if (!data) return null;
+    const filtered = applyFilters(data.issues, data.edges, filters);
+    const readyIds = computeReady(filtered.issues, filtered.edges);
+    const ranked = scoreReady(readyIds, filtered.issues, filtered.edges);
+    const mine = ranked.find((r) => r.issue.assignee?.id === data.viewerId);
+    return mine ?? ranked[0] ?? null;
+  }, [data, filters]);
 
   useEffect(() => {
     if (data) setGraph(data);
@@ -50,6 +63,42 @@ export function GraphView() {
       <div className="shrink-0">
         <Toolbar onRefresh={() => refetch()} />
       </div>
+      {startHere && (
+        <div className="shrink-0 border-b border-line bg-app">
+          <div className="max-w-[920px] mx-auto px-6 py-4 flex items-center gap-5">
+            <div className="text-right shrink-0">
+              <div className="font-mono text-2xl font-medium text-ink leading-none tracking-tight">
+                {startHere.unblocks}
+              </div>
+              <div className="text-[10px] uppercase tracking-[0.1em] text-muted mt-1">
+                unblock{startHere.unblocks === 1 ? "" : "s"}
+              </div>
+            </div>
+            <div className="w-px h-10 bg-line" />
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] uppercase tracking-[0.1em] text-muted mb-0.5">
+                Start here
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-xs text-muted shrink-0">{startHere.issue.identifier}</span>
+                <span className="text-sm font-medium text-ink truncate">{startHere.issue.title}</span>
+              </div>
+              <div className="text-xs font-mono text-muted mt-0.5">
+                P{startHere.priority} · {startHere.issue.team.name}
+                {startHere.issue.assignee && ` · ${startHere.issue.assignee.name}`}
+              </div>
+            </div>
+            <a
+              href={startHere.issue.url}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 px-3 py-1.5 rounded text-sm bg-ink text-paper hover:bg-ink-2 transition-colors no-underline"
+            >
+              Open in Linear ↗
+            </a>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-[1fr_305px] flex-1 min-h-0">
         <div className="relative bg-app">
           {isLoading && (

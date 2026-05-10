@@ -33,6 +33,7 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
       <Handle type="source" position={Position.Bottom} className="!opacity-0 !w-1 !h-1 !border-0 !pointer-events-none" />
       <div className="flex items-center gap-[7px]">
         <span aria-label={issue.state.name} className={`w-[11px] h-[11px] rounded-full border-[1.25px] border-ink-2 box-border shrink-0 ${STATUS_CLASS[issue.state.type]}`} />
+        {issue.isMine && <span title="Assigned to you" className="w-1 h-1 rounded-full bg-ink shrink-0" aria-hidden />}
         <span className={`font-mono text-xs tracking-tight ${ready ? "text-ink font-medium" : "text-muted"}`}>{issue.identifier}</span>
         {issue.assignee && (
           <span className="ml-auto">
