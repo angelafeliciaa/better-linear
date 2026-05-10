@@ -4,6 +4,7 @@ import type { Scope } from "@/lib/graph/filter";
 
 const SCOPES: Array<{ value: Scope; label: string }> = [
   { value: "my-work", label: "My Work" },
+  { value: "person", label: "Person" },
   { value: "project", label: "Project" },
   { value: "cycle", label: "Cycle" },
   { value: "team", label: "Team" },
@@ -22,6 +23,10 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
     : [];
   const teams = graph
     ? Array.from(new Map(graph.issues.map((i) => [i.team.key, i.team])).values())
+    : [];
+  const people = graph
+    ? Array.from(new Map(graph.issues.flatMap((i) => (i.assignee ? [[i.assignee.id, i.assignee]] : []))).values())
+        .sort((a, b) => a.name.localeCompare(b.name))
     : [];
 
   return (
@@ -46,7 +51,13 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
         {filters.scope !== "my-work" && (
           <div className="flex items-center gap-1.5 pl-3 ml-1.5 border-l border-line text-ink-2">
             <span className="text-muted">
-              {filters.scope === "project" ? "Project" : filters.scope === "cycle" ? "Cycle" : "Team"}
+              {filters.scope === "project"
+                ? "Project"
+                : filters.scope === "cycle"
+                ? "Cycle"
+                : filters.scope === "team"
+                ? "Team"
+                : "Person"}
             </span>
             <select
               className="bg-transparent rounded px-1.5 py-1 hover:bg-hover cursor-pointer text-sm"
@@ -55,13 +66,16 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
                   ? filters.projectId ?? ""
                   : filters.scope === "cycle"
                   ? filters.cycleId ?? ""
-                  : filters.teamKey ?? ""
+                  : filters.scope === "team"
+                  ? filters.teamKey ?? ""
+                  : filters.personId ?? ""
               }
               onChange={(e) => {
                 const v = e.target.value;
                 if (filters.scope === "project") setFilters({ projectId: v || null });
                 else if (filters.scope === "cycle") setFilters({ cycleId: v || null });
-                else setFilters({ teamKey: v || null });
+                else if (filters.scope === "team") setFilters({ teamKey: v || null });
+                else setFilters({ personId: v || null });
               }}
             >
               <option value="">All</option>
@@ -79,6 +93,12 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
                 teams.map((t) => (
                   <option key={t.key} value={t.key}>
                     {t.name}
+                  </option>
+                ))}
+              {filters.scope === "person" &&
+                people.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
                   </option>
                 ))}
             </select>

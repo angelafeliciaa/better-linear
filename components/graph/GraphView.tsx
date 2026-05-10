@@ -41,14 +41,16 @@ export function GraphView() {
   }, [data, setGraph]);
 
   return (
-    <div className="w-full max-w-[1180px] mx-auto my-7 rounded-[10px] overflow-hidden bg-app shadow-[0_1px_0_oklch(0.18_0.012_80/0.02),0_30px_80px_-36px_oklch(0.18_0.012_80/0.18)]">
+    <div className="h-screen w-screen flex flex-col bg-app overflow-hidden">
       {cycles.length > 0 && (
-        <div className="px-4 py-2 bg-hover border-b border-line text-xs text-ink-2">
+        <div className="px-4 py-2 bg-hover border-b border-line text-xs text-ink-2 shrink-0">
           Detected {cycles.length} dependency cycle{cycles.length === 1 ? "" : "s"}: {cycles[0].slice(0, 3).join(" ↔ ")}{cycles[0].length > 3 ? "…" : ""}
         </div>
       )}
-      <Toolbar onRefresh={() => refetch()} />
-      <div className="grid grid-cols-[1fr_305px] min-h-[540px]">
+      <div className="shrink-0">
+        <Toolbar onRefresh={() => refetch()} />
+      </div>
+      <div className="grid grid-cols-[1fr_305px] flex-1 min-h-0">
         <div className="relative bg-app">
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-ink-2">

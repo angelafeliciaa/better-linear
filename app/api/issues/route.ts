@@ -9,6 +9,7 @@ export async function GET() {
     const graph = await fetchAssignedGraph(session.accessToken);
     return NextResponse.json(graph, { headers: { "cache-control": "no-store" } });
   } catch (err) {
+    console.error("[/api/issues] failed:", err);
     const status = err instanceof Response ? err.status : 500;
     const message = err instanceof Error ? err.message : "Failed to fetch issues from Linear.";
     return NextResponse.json({ error: message }, { status });

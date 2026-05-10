@@ -5,6 +5,9 @@ node_modules/
 
 # Next.js
 .next/
+.next.nosync/
+.next-dev/
+tmp/
 out/
 build/
 dist/

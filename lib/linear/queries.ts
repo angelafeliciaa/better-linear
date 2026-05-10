@@ -7,17 +7,15 @@ export const ASSIGNED_ISSUES_QUERY = /* GraphQL */ `
         first: $first
       ) {
         nodes {
-          id identifier title url priority estimate
+          id identifier title url priority
           state { id name type color }
           team { id key name color }
           project { id name }
           cycle { id number }
           assignee { id name avatarUrl }
-          parent { id }
-          children { nodes { id } }
-          relations { nodes { type relatedIssue { id } } }
-          inverseRelations { nodes { type issue { id } } }
-          updatedAt createdAt
+          children(first: 20) { nodes { id } }
+          relations(first: 20) { nodes { type relatedIssue { id } } }
+          inverseRelations(first: 20) { nodes { type issue { id } } }
         }
       }
     }
@@ -25,19 +23,18 @@ export const ASSIGNED_ISSUES_QUERY = /* GraphQL */ `
 `;
 
 export const ISSUES_BY_IDS_QUERY = /* GraphQL */ `
-  query IssuesByIds($ids: [String!]!) {
-    issues(filter: { id: { in: $ids } }, first: 250) {
+  query IssuesByIds($ids: [ID!]!) {
+    issues(filter: { id: { in: $ids } }, first: 50) {
       nodes {
-        id identifier title url priority estimate
+        id identifier title url priority
         state { id name type color }
         team { id key name color }
         project { id name }
         cycle { id number }
         assignee { id name avatarUrl }
-        parent { id }
-        children { nodes { id } }
-        relations { nodes { type relatedIssue { id } } }
-        inverseRelations { nodes { type issue { id } } }
+        children(first: 20) { nodes { id } }
+        relations(first: 20) { nodes { type relatedIssue { id } } }
+        inverseRelations(first: 20) { nodes { type issue { id } } }
       }
     }
   }

@@ -1,12 +1,13 @@
 import type { Issue, Edge } from "@/lib/linear/types";
 
-export type Scope = "my-work" | "cycle" | "project" | "team";
+export type Scope = "my-work" | "cycle" | "project" | "team" | "person";
 
 export type Filters = {
   scope: Scope;
   cycleId: string | null;
   projectId: string | null;
   teamKey: string | null;
+  personId: string | null;
   priorities: Array<0 | 1 | 2 | 3 | 4>;
   assigneeIds: string[];
   showDone: boolean;
@@ -17,6 +18,7 @@ export const defaultFilters: Filters = {
   cycleId: null,
   projectId: null,
   teamKey: null,
+  personId: null,
   priorities: [],
   assigneeIds: [],
   showDone: false,
@@ -28,10 +30,12 @@ export function applyFilters(issues: Issue[], edges: Edge[], f: Filters): { issu
     if (f.scope === "cycle") return f.cycleId ? i.cycle?.id === f.cycleId : true;
     if (f.scope === "project") return f.projectId ? i.project?.id === f.projectId : true;
     if (f.scope === "team") return f.teamKey ? i.team.key === f.teamKey : true;
+    if (f.scope === "person") return f.personId ? i.assignee?.id === f.personId : true;
     return true;
   }).map((i) => i.id));
 
-  if (f.scope === "my-work") {
+  // For "my-work" and "person", pull in direct blockers so context is visible.
+  if (f.scope === "my-work" || f.scope === "person") {
     for (const e of edges) if (e.kind === "blocks" && allowedByScope.has(e.to)) allowedByScope.add(e.from);
   }
 

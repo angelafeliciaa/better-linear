@@ -5,7 +5,7 @@ import type { IssueGraph } from "./types";
 
 export async function fetchAssignedGraph(apiKey: string): Promise<IssueGraph> {
   const client = new LinearClient({ apiKey });
-  const first = 250;
+  const first = 50;
 
   const data = (await client.client.rawRequest(ASSIGNED_ISSUES_QUERY, { first })).data as {
     viewer: { id: string; assignedIssues: { nodes: Record<string, unknown>[] } };
