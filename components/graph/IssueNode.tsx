@@ -22,7 +22,7 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
       rel="noreferrer"
       title="Open in Linear"
       className={[
-        "block w-[220px] no-underline text-left rounded-[5px] bg-surface px-3 py-[10px]",
+        "group block w-[220px] no-underline text-left rounded-[5px] bg-surface px-3 py-[10px]",
         "border transition-opacity duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "hover:bg-hover",
         ready ? "border-line-ink" : "border-line-strong",
@@ -44,10 +44,8 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
         )}
       </div>
       <div className="mt-1 text-sm font-medium leading-[1.35] text-ink line-clamp-2">{issue.title}</div>
-      <div className="mt-2 flex items-center gap-2 text-xs font-mono text-muted">
-        <span>P{issue.priority}</span>
-        <span className="text-muted-2">·</span>
-        <span>{issue.team.name}</span>
+      <div className="mt-2 text-xs font-mono text-muted-2 group-hover:text-ink-2 transition-colors">
+        Open in Linear ↗
       </div>
     </a>
   );
