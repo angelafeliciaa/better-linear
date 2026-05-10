@@ -84,7 +84,7 @@ export function GraphView() {
                 <span className="text-sm font-medium text-ink truncate">{startHere.issue.title}</span>
               </div>
               <div className="text-xs font-mono text-muted mt-0.5">
-                P{startHere.priority} · {startHere.issue.team.name}
+                {startHere.issue.team.name}
                 {startHere.issue.assignee && ` · ${startHere.issue.assignee.name}`}
               </div>
             </div>

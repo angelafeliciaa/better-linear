@@ -36,7 +36,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "/tmp/better-linear-next/types/**/*.ts",
-    "/tmp/better-linear-next/dev/types/**/*.ts"
+    "/tmp/better-linear-next/dev/types/**/*.ts",
+    ".next.nosync/types/**/*.ts",
+    ".next.nosync/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
