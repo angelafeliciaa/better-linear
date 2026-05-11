@@ -22,9 +22,9 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
       rel="noreferrer"
       title="Open in Linear"
       className={[
-        "group block w-[220px] no-underline text-left rounded-[5px] bg-surface px-3 py-[10px]",
+        "nodrag nopan group block w-[220px] no-underline text-left rounded-[5px] bg-surface px-3 py-[10px]",
         "border transition-opacity duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        "hover:bg-hover",
+        "hover:bg-hover cursor-pointer",
         ready ? "border-line-ink" : "border-line-strong",
         dimmed ? "opacity-30" : "opacity-100",
       ].join(" ")}
