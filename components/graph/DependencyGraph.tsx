@@ -24,7 +24,7 @@ export function DependencyGraph() {
   const selection = useGraphStore((s) => s.selection);
   const setSelection = useGraphStore((s) => s.setSelection);
   const clearSelection = useGraphStore((s) => s.clearSelection);
-  const [showIsolated, setShowIsolated] = useState(false);
+  const [showIsolated, setShowIsolated] = useState(true);
 
   const view = useMemo(() => {
     if (!graph) return null;
