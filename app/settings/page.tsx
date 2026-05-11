@@ -5,6 +5,12 @@ import { getSession } from "@/lib/auth/get-session";
 const ERRORS: Record<string, string> = {
   missing: "Paste your Linear personal API key.",
   invalid: "Linear rejected that key. Double-check it's a personal API key.",
+  oauth_unconfigured: "OAuth isn't configured on this deploy.",
+  oauth_denied: "You declined the Linear authorization.",
+  oauth_no_code: "Linear didn't return an authorization code.",
+  oauth_state: "OAuth state mismatch. Try signing in again.",
+  oauth_exchange: "Couldn't exchange the code with Linear. Try again.",
+  oauth_viewer: "Got a token but Linear rejected the viewer lookup.",
 };
 
 type Props = { searchParams: Promise<{ error?: string }> };
@@ -12,6 +18,7 @@ type Props = { searchParams: Promise<{ error?: string }> };
 export default async function SettingsPage({ searchParams }: Props) {
   const params = await searchParams;
   const session = await getSession();
+  const oauthEnabled = Boolean(process.env.LINEAR_CLIENT_ID && process.env.LINEAR_REDIRECT_URI);
 
   let viewerName: string | null = null;
   if (session) {
@@ -29,8 +36,26 @@ export default async function SettingsPage({ searchParams }: Props) {
       <div className="max-w-[520px] w-full">
         <h1 className="text-2xl font-semibold tracking-tight">Connect Linear</h1>
         <p className="mt-3 text-sm text-ink-2 leading-relaxed">
-          better-linear talks to Linear with a personal API key. Anyone in any workspace can mint one. We never share or persist your key, it lives only in an encrypted httpOnly cookie on this device.
+          better-linear reads from Linear on your behalf. Your credentials live only in an encrypted httpOnly cookie on this device — never stored on our servers.
         </p>
+
+        {!session && oauthEnabled && (
+          <div className="mt-6">
+            <a
+              href="/api/auth/login"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded text-sm bg-ink text-paper hover:bg-ink-2 transition-colors"
+            >
+              Sign in with Linear
+            </a>
+            <p className="mt-2 text-xs text-muted">Recommended. Opens Linear&apos;s OAuth consent screen.</p>
+          </div>
+        )}
+
+        {!session && oauthEnabled && (
+          <div className="mt-6 flex items-center gap-3 text-xs uppercase tracking-[0.09em] text-muted">
+            <span className="h-px flex-1 bg-line" /> or paste a personal API key <span className="h-px flex-1 bg-line" />
+          </div>
+        )}
 
         {session && viewerName && (
           <div className="mt-6 rounded border border-line bg-surface p-4">
