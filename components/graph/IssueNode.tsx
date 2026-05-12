@@ -16,13 +16,10 @@ const AVATAR_BG: Record<1 | 2 | 3, string> = { 1: "bg-av-1", 2: "bg-av-2", 3: "b
 export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean; onClick?: () => void }) {
   const { issue, ready, dimmed } = props;
   return (
-    <a
-      href={issue.url}
-      target="_blank"
-      rel="noreferrer"
+    <div
       title="Open in Linear"
       className={[
-        "nodrag nopan group block w-[220px] no-underline text-left rounded-[5px] bg-surface px-3 py-[10px]",
+        "group block w-[220px] text-left rounded-[5px] bg-surface px-3 py-[10px]",
         "border transition-opacity duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "hover:bg-hover cursor-pointer",
         ready ? "border-line-ink" : "border-line-strong",
@@ -47,6 +44,6 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
       <div className="mt-2 text-xs font-mono text-muted-2 group-hover:text-ink-2 transition-colors">
         Open in Linear ↗
       </div>
-    </a>
+    </div>
   );
 }
