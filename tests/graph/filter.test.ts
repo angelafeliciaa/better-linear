@@ -5,7 +5,7 @@ import type { Issue, Edge } from "@/lib/linear/types";
 const mk = (id: string, p: Issue["priority"] = 2, type: Issue["state"]["type"] = "unstarted", isMine = true): Issue => ({
   id, identifier: id, title: id, url: "", priority: p, estimate: null,
   state: { id: "s", name: "T", type, color: "#aaa" },
-  team: { key: "X", name: "X", color: "#888" }, project: null, cycle: null, assignee: null, isMine,
+  team: { key: "X", name: "X", color: "#888" }, project: null, cycle: null, assignee: null, isMine, updatedAt: "2026-05-01T00:00:00Z",
 });
 
 describe("applyFilters", () => {

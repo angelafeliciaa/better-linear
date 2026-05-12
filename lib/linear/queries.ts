@@ -7,7 +7,7 @@ export const ASSIGNED_ISSUES_QUERY = /* GraphQL */ `
         first: $first
       ) {
         nodes {
-          id identifier title url priority
+          id identifier title url priority updatedAt
           state { id name type color }
           team { id key name color }
           project { id name }
@@ -26,7 +26,7 @@ export const ISSUES_BY_IDS_QUERY = /* GraphQL */ `
   query IssuesByIds($ids: [ID!]!) {
     issues(filter: { id: { in: $ids } }, first: 50) {
       nodes {
-        id identifier title url priority
+        id identifier title url priority updatedAt
         state { id name type color }
         team { id key name color }
         project { id name }

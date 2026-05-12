@@ -14,6 +14,7 @@ export type Issue = {
   cycle: { id: string; number: number } | null;
   assignee: { id: string; name: string; avatarUrl: string | null } | null;
   isMine: boolean;
+  updatedAt: string;
 };
 
 export type Edge =

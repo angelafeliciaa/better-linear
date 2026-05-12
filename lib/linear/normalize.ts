@@ -42,6 +42,7 @@ export function normalizeIssues(raw: RawAny[], viewerId: string): IssueGraph {
         ? { id: String(assignee.id), name: String(assignee.name ?? ""), avatarUrl: (assignee.avatarUrl as string) ?? null }
         : null,
       isMine: assignee ? String((assignee as RawAny).id) === viewerId : false,
+      updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : "",
     };
   });
 

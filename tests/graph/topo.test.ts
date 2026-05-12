@@ -5,7 +5,7 @@ import type { Issue, Edge } from "@/lib/linear/types";
 const mk = (id: string, partial: Partial<Issue> = {}): Issue => ({
   id, identifier: id, title: id, url: "", priority: 2, estimate: null,
   state: { id: "s", name: "Todo", type: "unstarted", color: "#aaa" },
-  team: { key: "X", name: "X", color: "#888" }, project: null, cycle: null, assignee: null, isMine: true, ...partial,
+  team: { key: "X", name: "X", color: "#888" }, project: null, cycle: null, assignee: null, isMine: true, updatedAt: "2026-05-01T00:00:00Z", ...partial,
 });
 
 describe("computeReady", () => {

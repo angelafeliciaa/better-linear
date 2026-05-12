@@ -9,7 +9,7 @@ const issue: Issue = {
   priority: 1, estimate: null,
   state: { id: "s", name: "Todo", type: "unstarted", color: "#aaa" },
   team: { key: "ENG", name: "Engineering", color: "#888" }, project: null, cycle: null,
-  assignee: { id: "u", name: "Angela Felicia", avatarUrl: null }, isMine: true,
+  assignee: { id: "u", name: "Angela Felicia", avatarUrl: null }, isMine: true, updatedAt: "2026-05-01T00:00:00Z",
 };
 
 const renderNode = (props: { ready: boolean; dimmed: boolean }) =>
