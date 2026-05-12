@@ -53,22 +53,24 @@ export function layoutGraph(
   dagre.layout(g);
 
   const out = new Map<string, NodePosition>();
-  let maxBottom = MARGIN;
-  let minLeft = MARGIN;
+  let maxRight = MARGIN;
+  let topY = MARGIN;
+  let hasConnectedPos = false;
   for (const i of connectedIssues) {
     const n = g.node(i.id);
     if (!n) continue;
     const x = n.x - NODE_WIDTH / 2;
     const y = n.y - NODE_HEIGHT / 2;
     out.set(i.id, { x, y });
-    if (y + NODE_HEIGHT > maxBottom) maxBottom = y + NODE_HEIGHT;
-    if (x < minLeft) minLeft = x;
+    if (!hasConnectedPos || y < topY) topY = y;
+    if (x + NODE_WIDTH > maxRight) maxRight = x + NODE_WIDTH;
+    hasConnectedPos = true;
   }
 
   if (isolatedIssues.length > 0) {
     const sorted = [...isolatedIssues].sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
-    const rowY = (connectedIssues.length > 0 ? maxBottom + RANKSEP : MARGIN);
-    const startX = connectedIssues.length > 0 ? minLeft : MARGIN;
+    const startX = hasConnectedPos ? maxRight + RANKSEP : MARGIN;
+    const rowY = hasConnectedPos ? topY : MARGIN;
     sorted.forEach((issue, idx) => {
       out.set(issue.id, { x: startX + idx * (NODE_WIDTH + NODESEP), y: rowY });
     });
