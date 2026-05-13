@@ -11,11 +11,28 @@ import { layoutGraph, NODE_WIDTH, NODE_HEIGHT, connectedIssueIds } from "@/lib/g
 import { dependencyClosure } from "@/lib/graph/closure";
 
 type IssueNodeData = { issue: Issue; ready: boolean; dimmed: boolean; onClick: () => void };
+type BandLabelData = { label: string; width: number };
 
 const nodeTypes = {
   issue: ({ data }: { data: IssueNodeData }) => (
     <IssueNode issue={data.issue} ready={data.ready} dimmed={data.dimmed} onClick={data.onClick} />
   ),
+  bandLabel: ({ data }: { data: BandLabelData }) => (
+    <div
+      style={{ width: data.width }}
+      className="pointer-events-none select-none flex items-center gap-3 text-xs font-mono uppercase tracking-[0.12em] text-muted"
+    >
+      <span>{data.label}</span>
+      <span className="h-px flex-1 bg-line" />
+    </div>
+  ),
+};
+
+const bandFor = (type: Issue["state"]["type"]) => {
+  if (type === "backlog") return "backlog";
+  if (type === "unstarted") return "unstarted";
+  if (type === "started") return "started";
+  return null;
 };
 
 export function DependencyGraph() {
@@ -32,10 +49,10 @@ export function DependencyGraph() {
     const ready = new Set(computeReady(filtered.issues, filtered.edges));
     const connected = connectedIssueIds(filtered.issues, filtered.edges);
     const isolatedCount = filtered.issues.filter((i) => !connected.has(i.id)).length;
-    const positions = layoutGraph(filtered.issues, filtered.edges, { hideIsolated: !showIsolated });
+    const { positions, bands } = layoutGraph(filtered.issues, filtered.edges, { hideIsolated: !showIsolated });
     const closure = selection ? dependencyClosure(selection, filtered.edges) : null;
 
-    const nodes: Node[] = filtered.issues
+    const issueNodes: Node[] = filtered.issues
       .filter((i) => positions.has(i.id))
       .map((issue) => {
         const pos = positions.get(issue.id)!;
@@ -51,8 +68,26 @@ export function DependencyGraph() {
           height: NODE_HEIGHT,
         };
       });
+
+    const labelNodes: Node[] = bands.map((b) => ({
+      id: `band:${b.key}`,
+      type: "bandLabel",
+      position: { x: b.xLeft, y: b.yTop },
+      draggable: false,
+      selectable: false,
+      data: { label: b.label, width: Math.max(160, b.xRight - b.xLeft) },
+    }));
+
+    const issueBand = new Map<string, string | null>();
+    for (const i of filtered.issues) issueBand.set(i.id, bandFor(i.state.type));
+
     const edges: RFEdge[] = filtered.edges
       .filter((e) => e.kind === "blocks")
+      .filter((e) => {
+        const a = issueBand.get(e.from);
+        const b = issueBand.get(e.to);
+        return a !== null && a === b;
+      })
       .map((e) => ({
         id: `${e.from}->${e.to}`,
         source: e.from,
@@ -62,7 +97,7 @@ export function DependencyGraph() {
         style: { stroke: "var(--color-line-strong)", strokeWidth: 1.25 },
       }));
 
-    return { nodes, edges, isolatedCount };
+    return { nodes: [...labelNodes, ...issueNodes], edges, isolatedCount };
   }, [graph, filters, selection, setSelection, showIsolated]);
 
   if (!view) return null;
