@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Handle, Position } from "@xyflow/react";
 import type { Issue } from "@/lib/linear/types";
 import { avatarBucket, avatarInitial } from "@/lib/avatar";
@@ -15,6 +16,16 @@ const AVATAR_BG: Record<1 | 2 | 3, string> = { 1: "bg-av-1", 2: "bg-av-2", 3: "b
 
 export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean; onClick?: () => void }) {
   const { issue, ready, dimmed } = props;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    void navigator.clipboard.writeText(issue.url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    });
+  };
+
   return (
     <div
       title="Open in Linear"
@@ -41,8 +52,16 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
         )}
       </div>
       <div className="mt-1 text-sm font-medium leading-[1.35] text-ink line-clamp-2">{issue.title}</div>
-      <div className="mt-2 text-xs font-mono text-muted-2 group-hover:text-ink-2 transition-colors">
-        Open in Linear ↗
+      <div className="mt-2 flex items-center justify-between gap-2 text-xs font-mono text-muted-2">
+        <span className="group-hover:text-ink-2 transition-colors">Open in Linear ↗</span>
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label="Copy issue URL"
+          className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-[0.08em] text-muted hover:text-ink hover:bg-hover transition-colors"
+        >
+          {copied ? "Copied" : "Copy URL"}
+        </button>
       </div>
     </div>
   );
