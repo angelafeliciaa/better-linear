@@ -37,7 +37,7 @@ export function ReadyPanel() {
     <aside className="w-[305px] border-l border-line bg-app flex flex-col overflow-y-auto">
       <section className="px-[18px] pt-5 pb-3">
         <h2 className="text-xs uppercase tracking-[0.09em] text-muted font-medium mb-4 flex items-center justify-between">
-          Ready to work <span className="font-mono text-muted-2">{ready.length}</span>
+          Next up <span className="font-mono text-muted-2">{ready.length}</span>
         </h2>
         {ready.length === 0 && (
           <p className="text-sm text-ink-2 leading-relaxed">
