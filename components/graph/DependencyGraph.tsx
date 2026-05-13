@@ -121,10 +121,6 @@ export function DependencyGraph() {
         fitView
         zoomOnDoubleClick={false}
         defaultEdgeOptions={{ type: "step" }}
-        onNodeClick={(_, node) => {
-          const url = (node.data as { issue?: { url?: string } } | undefined)?.issue?.url;
-          if (url) window.open(url, "_blank", "noopener,noreferrer");
-        }}
       >
         <Background gap={0} color="transparent" />
         <Controls showInteractive={false} />

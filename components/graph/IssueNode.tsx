@@ -28,11 +28,9 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
 
   return (
     <div
-      title="Open in Linear"
       className={[
         "group block w-[220px] text-left rounded-[5px] bg-surface px-3 py-[10px]",
         "border transition-opacity duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        "hover:bg-hover cursor-pointer",
         ready ? "border-line-ink" : "border-line-strong",
         dimmed ? "opacity-30" : "opacity-100",
       ].join(" ")}
@@ -53,9 +51,23 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
       </div>
       <div className="mt-1 text-sm font-medium leading-[1.35] text-ink line-clamp-2">{issue.title}</div>
       <div className="mt-2 flex items-center justify-between gap-2 text-xs font-mono text-muted-2">
-        <span className="group-hover:text-ink-2 transition-colors">Open in Linear ↗</span>
+        <a
+          href={issue.url}
+          target="_blank"
+          rel="noreferrer"
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open(issue.url, "_blank", "noopener,noreferrer");
+          }}
+          className="px-1.5 py-0.5 -ml-1.5 rounded text-muted-2 hover:text-ink hover:bg-hover transition-colors no-underline"
+        >
+          Open in Linear ↗
+        </a>
         <button
           type="button"
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={handleCopy}
           aria-label="Copy issue URL"
           className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-[0.08em] text-muted hover:text-ink hover:bg-hover transition-colors"
