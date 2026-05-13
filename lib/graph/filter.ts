@@ -4,6 +4,7 @@ export type Scope = "my-work" | "cycle" | "project" | "team" | "person";
 
 export type Filters = {
   scope: Scope;
+  query: string;
   cycleId: string | null;
   projectId: string | null;
   teamKey: string | null;
@@ -15,6 +16,7 @@ export type Filters = {
 
 export const defaultFilters: Filters = {
   scope: "my-work",
+  query: "",
   cycleId: null,
   projectId: null,
   teamKey: null,
@@ -23,6 +25,19 @@ export const defaultFilters: Filters = {
   assigneeIds: [],
   showDone: false,
 };
+
+function matchesSearch(i: Issue, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+
+  const identifier = i.identifier.toLowerCase();
+  const issueNumber = identifier.split("-").at(-1);
+  if (identifier === q) return true;
+  if (/^\d+$/.test(q)) return issueNumber === q;
+  if (/^[a-z][a-z0-9]*-\d+$/i.test(q)) return false;
+
+  return identifier.includes(q) || i.title.toLowerCase().includes(q);
+}
 
 export function applyFilters(issues: Issue[], edges: Edge[], f: Filters): { issues: Issue[]; edges: Edge[] } {
   const allowedByScope = new Set(issues.filter((i) => {
@@ -44,6 +59,7 @@ export function applyFilters(issues: Issue[], edges: Edge[], f: Filters): { issu
     if (!f.showDone && (i.state.type === "completed" || i.state.type === "canceled")) return false;
     if (f.priorities.length && !f.priorities.includes(i.priority)) return false;
     if (f.assigneeIds.length && !(i.assignee && f.assigneeIds.includes(i.assignee.id))) return false;
+    if (!matchesSearch(i, f.query)) return false;
     return true;
   });
   const keptIds = new Set(kept.map((i) => i.id));

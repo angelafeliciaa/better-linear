@@ -28,4 +28,26 @@ describe("applyFilters", () => {
     const out = applyFilters(issues, edges, { ...defaultFilters, showDone: false });
     expect(out.edges).toEqual([]);
   });
+
+  it("filters issues by title keyword", () => {
+    const issues = [
+      { ...mk("ENG-101"), title: "Add dependency graph search" },
+      { ...mk("ENG-102"), title: "Polish ready panel" },
+    ];
+
+    const out = applyFilters(issues, [], { ...defaultFilters, query: "graph search" });
+
+    expect(out.issues.map((i) => i.identifier)).toEqual(["ENG-101"]);
+  });
+
+  it("filters issues by issue identifier without matching partial numbers", () => {
+    const issues = [
+      { ...mk("ENG-42"), identifier: "ENG-42", title: "OAuth callback" },
+      { ...mk("ENG-142"), identifier: "ENG-142", title: "Settings page" },
+    ];
+
+    const out = applyFilters(issues, [], { ...defaultFilters, query: "  eng-42  " });
+
+    expect(out.issues.map((i) => i.identifier)).toEqual(["ENG-42"]);
+  });
 });

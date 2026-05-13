@@ -30,12 +30,13 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
     : [];
 
   return (
-    <div className="flex items-center justify-between px-[14px] border-b border-line h-[46px] text-sm">
-      <div className="flex items-center gap-4">
+    <div className="flex items-center justify-between gap-3 px-[14px] border-b border-line h-[46px] text-sm">
+      <div className="flex min-w-0 items-center gap-4">
         <span className="font-semibold tracking-tight text-sm">better-linear</span>
         <div className="flex gap-0.5">
           {SCOPES.map((s) => (
             <button
+              type="button"
               key={s.value}
               onClick={() => setFilters({ scope: s.value })}
               className={`px-2.5 py-1 rounded text-sm ${
@@ -47,6 +48,29 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
               {s.label}
             </button>
           ))}
+        </div>
+        <div className="relative min-w-[180px] w-[240px] max-w-[28vw]">
+          <label htmlFor="issue-search" className="sr-only">
+            Search issues
+          </label>
+          <input
+            id="issue-search"
+            type="search"
+            value={filters.query}
+            onChange={(e) => setFilters({ query: e.target.value })}
+            placeholder="Search title or issue #"
+            className="w-full h-7 rounded border border-line bg-surface pl-2.5 pr-8 text-sm text-ink placeholder:text-muted hover:border-line-strong focus:border-line-ink focus:outline-none"
+          />
+          {filters.query && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setFilters({ query: "" })}
+              className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded text-muted hover:bg-hover hover:text-ink"
+            >
+              ×
+            </button>
+          )}
         </div>
         {filters.scope !== "my-work" && (
           <div className="flex items-center gap-1.5 pl-3 ml-1.5 border-l border-line text-ink-2">
@@ -107,6 +131,7 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
       </div>
       <div className="flex items-center gap-1 text-muted">
         <button
+          type="button"
           onClick={() => setFilters({ showDone: !filters.showDone })}
           className={`inline-flex items-center justify-center w-7 h-7 rounded ${
             filters.showDone ? "bg-hover text-ink" : "hover:bg-hover hover:text-ink"
@@ -119,6 +144,7 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
           </svg>
         </button>
         <button
+          type="button"
           onClick={onRefresh}
           className="inline-flex items-center justify-center w-7 h-7 rounded hover:bg-hover hover:text-ink"
           title="Refresh"
