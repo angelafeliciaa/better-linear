@@ -58,10 +58,8 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
-            e.preventDefault();
-            window.open(issue.url, "_blank", "noopener,noreferrer");
           }}
-          className="px-1.5 py-0.5 -ml-1.5 rounded text-muted-2 hover:text-ink hover:bg-hover transition-colors no-underline"
+          className="nodrag nopan px-1.5 py-0.5 -ml-1.5 rounded text-muted-2 hover:text-ink hover:bg-hover transition-colors no-underline"
         >
           Open in Linear ↗
         </a>
@@ -70,7 +68,7 @@ export function IssueNode(props: { issue: Issue; ready: boolean; dimmed: boolean
           onMouseDown={(e) => e.stopPropagation()}
           onClick={handleCopy}
           aria-label="Copy issue URL"
-          className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-[0.08em] text-muted hover:text-ink hover:bg-hover transition-colors"
+          className="nodrag nopan px-1.5 py-0.5 rounded text-[10px] uppercase tracking-[0.08em] text-muted hover:text-ink hover:bg-hover transition-colors"
         >
           {copied ? "Copied" : "Copy URL"}
         </button>
