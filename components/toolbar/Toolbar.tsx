@@ -49,29 +49,6 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
             </button>
           ))}
         </div>
-        <div className="relative min-w-[180px] w-[240px] max-w-[28vw]">
-          <label htmlFor="issue-search" className="sr-only">
-            Search issues
-          </label>
-          <input
-            id="issue-search"
-            type="search"
-            value={filters.query}
-            onChange={(e) => setFilters({ query: e.target.value })}
-            placeholder="Search title or issue #"
-            className="w-full h-7 rounded border border-line bg-surface pl-2.5 pr-8 text-sm text-ink placeholder:text-muted hover:border-line-strong focus:border-line-ink focus:outline-none"
-          />
-          {filters.query && (
-            <button
-              type="button"
-              aria-label="Clear search"
-              onClick={() => setFilters({ query: "" })}
-              className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded text-muted hover:bg-hover hover:text-ink"
-            >
-              ×
-            </button>
-          )}
-        </div>
         {filters.scope !== "my-work" && (
           <div className="flex items-center gap-1.5 pl-3 ml-1.5 border-l border-line text-ink-2">
             <span className="text-muted">
@@ -129,7 +106,30 @@ export function Toolbar({ onRefresh }: { onRefresh: () => void }) {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-1 text-muted">
+      <div className="flex shrink-0 items-center gap-1 text-muted">
+        <div className="relative w-[240px]">
+          <label htmlFor="issue-search" className="sr-only">
+            Search issues
+          </label>
+          <input
+            id="issue-search"
+            type="search"
+            value={filters.query}
+            onChange={(e) => setFilters({ query: e.target.value })}
+            placeholder="Search title or issue #"
+            className="w-full h-7 rounded border border-line bg-surface pl-2.5 pr-8 text-sm text-ink placeholder:text-muted hover:border-line-strong focus:border-line-ink focus:outline-none"
+          />
+          {filters.query && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setFilters({ query: "" })}
+              className="absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded text-muted hover:bg-hover hover:text-ink"
+            >
+              ×
+            </button>
+          )}
+        </div>
         <button
           type="button"
           onClick={() => setFilters({ showDone: !filters.showDone })}
